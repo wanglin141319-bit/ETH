@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ETH 日报 - 2026年04月13日</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+            border-radius: 20px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #00d084, #00a8ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .header .date {
+            font-size: 1.2em;
+            color: #888;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        .card-title {
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .card-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: linear-gradient(135deg, #00d084, #00a8ff);
+            border-radius: 2px;
+        }
+        .price-main {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .price-change {
+            font-size: 1.2em;
+            padding: 5px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        .stat-item {
+            background: rgba(255,255,255,0.03);
+            padding: 15px;
+            border-radius: 10px;
+        }
+        .stat-label {
+            font-size: 0.9em;
+            color: #888;
+            margin-bottom: 5px;
+        }
+        .stat-value {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #fff;
+        }
+        .levels-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .levels-table th,
+        .levels-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .levels-table th {
+            color: #888;
+            font-weight: normal;
+        }
+        .level-r {
+            color: #ff4757;
+        }
+        .level-s {
+            color: #00d084;
+        }
+        .fear-greed {
+            text-align: center;
+            padding: 30px;
+        }
+        .fear-greed-value {
+            font-size: 4em;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        .fear-greed-text {
+            font-size: 1.5em;
+            padding: 10px 30px;
+            border-radius: 25px;
+            display: inline-block;
+        }
+        .liquidation-bar {
+            height: 30px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+        .liquidation-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff4757, #ff6b7a);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: bold;
+        }
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+            font-size: 0.9em;
+        }
+        .footer a {
+            color: #00a8ff;
+            text-decoration: none;
+        }
+        .btc-icon, .eth-icon {
+            font-size: 1.5em;
+            margin-right: 5px;
+        }
+        .btc-icon { color: #f7931a; }
+        .eth-icon { color: #627eea; }
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            .header h1 {
+                font-size: 1.8em;
+            }
+            .price-main {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 ETH 市场日报</h1>
+            <div class="date">2026年04月13日</div>
+        </div>
+        
+        <div class="grid">
+            <!-- BTC 价格卡片 -->
+            <div class="card">
+                <div class="card-title"><span class="btc-icon">₿</span>BTC 价格</div>
+                <div class="price-main">$70,966.00</div>
+                <div style="color: #888;">≈ ¥484,920.00</div>
+                <div class="price-change" style="background: #ff475720; color: #ff4757;">
+                    -1.02%
+                </div>
+                <div class="stats-grid" style="margin-top: 20px;">
+                    <div class="stat-item">
+                        <div class="stat-label">市值</div>
+                        <div class="stat-value">1420.40B</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">24h 成交量</div>
+                        <div class="stat-value">27.72B</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- ETH 价格卡片 -->
+            <div class="card">
+                <div class="card-title"><span class="eth-icon">Ξ</span>ETH 价格</div>
+                <div class="price-main">$2,192.13</div>
+                <div style="color: #888;">≈ ¥14,979.27</div>
+                <div class="price-change" style="background: #ff475720; color: #ff4757;">
+                    -1.11%
+                </div>
+                <div class="stats-grid" style="margin-top: 20px;">
+                    <div class="stat-item">
+                        <div class="stat-label">市值</div>
+                        <div class="stat-value">264.61B</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">24h 成交量</div>
+                        <div class="stat-value">12.96B</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 市场情绪 -->
+            <div class="card">
+                <div class="card-title">😊 市场情绪</div>
+                <div class="fear-greed">
+                    <div class="fear-greed-value" style="color: #ffd700;">50</div>
+                    <div class="fear-greed-text" style="background: #ffd70020; color: #ffd700;">
+                        Neutral
+                    </div>
+                </div>
+                <div class="stats-grid" style="margin-top: 20px;">
+                    <div class="stat-item">
+                        <div class="stat-label">BTC 市值占比</div>
+                        <div class="stat-value">0.0%</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">ETH 市值占比</div>
+                        <div class="stat-value">0.0%</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 爆仓数据 -->
+            <div class="card">
+                <div class="card-title">💥 24h 爆仓数据</div>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-label">BTC 爆仓</div>
+                        <div class="stat-value">150.00M</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">ETH 爆仓</div>
+                        <div class="stat-value">80.00M</div>
+                    </div>
+                </div>
+                <div style="margin-top: 20px;">
+                    <div class="stat-label">全网爆仓总额: 350.00M</div>
+                    <div class="liquidation-bar">
+                        <div class="liquidation-fill" style="width: 65%;">
+                            多头 65%
+                        </div>
+                    </div>
+                    <div style="text-align: right; color: #888; font-size: 0.9em;">
+                        空头 35%
+                    </div>
+                </div>
+            </div>
+            
+            <!-- BTC 支撑阻力 -->
+            <div class="card">
+                <div class="card-title">📈 BTC 关键位</div>
+                <table class="levels-table">
+                    <tr>
+                        <th>阻力位 3</th>
+                        <td class="level-r">$74,514.30</td>
+                    </tr>
+                    <tr>
+                        <th>阻力位 2</th>
+                        <td class="level-r">$73,094.98</td>
+                    </tr>
+                    <tr>
+                        <th>阻力位 1</th>
+                        <td class="level-r">$72,030.49</td>
+                    </tr>
+                    <tr>
+                        <th style="color: #fff;">当前价格</th>
+                        <td style="color: #fff; font-weight: bold;">$70,966.00</td>
+                    </tr>
+                    <tr>
+                        <th>支撑位 1</th>
+                        <td class="level-s">$69,901.51</td>
+                    </tr>
+                    <tr>
+                        <th>支撑位 2</th>
+                        <td class="level-s">$68,837.02</td>
+                    </tr>
+                    <tr>
+                        <th>支撑位 3</th>
+                        <td class="level-s">$67,417.70</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <!-- ETH 支撑阻力 -->
+            <div class="card">
+                <div class="card-title">📉 ETH 关键位</div>
+                <table class="levels-table">
+                    <tr>
+                        <th>阻力位 3</th>
+                        <td class="level-r">$2,301.74</td>
+                    </tr>
+                    <tr>
+                        <th>阻力位 2</th>
+                        <td class="level-r">$2,257.89</td>
+                    </tr>
+                    <tr>
+                        <th>阻力位 1</th>
+                        <td class="level-r">$2,225.01</td>
+                    </tr>
+                    <tr>
+                        <th style="color: #fff;">当前价格</th>
+                        <td style="color: #fff; font-weight: bold;">$2,192.13</td>
+                    </tr>
+                    <tr>
+                        <th>支撑位 1</th>
+                        <td class="level-s">$2,159.25</td>
+                    </tr>
+                    <tr>
+                        <th>支撑位 2</th>
+                        <td class="level-s">$2,126.37</td>
+                    </tr>
+                    <tr>
+                        <th>支撑位 3</th>
+                        <td class="level-s">$2,082.52</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>数据更新时间: 2026-04-13 11:41:02</p>
+            <p>数据来源: CoinGecko API | 仅供参考，不构成投资建议</p>
+            <p style="margin-top: 10px;">
+                <a href="https://t.me/bitebiwang1413" target="_blank">Telegram</a> |
+                <a href="https://twitter.com/bitebiwang1413" target="_blank">Twitter</a> |
+                <a href="https://t.me/bitebiwanglin" target="_blank">频道订阅</a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>
