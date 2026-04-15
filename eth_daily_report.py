@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """ETH Daily Report v2.0 - Complete rewrite with 7 sections"""
+import sys, io
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
 
-import requests, json, os, sys, subprocess, re
+import requests, json, os, subprocess, re
 from datetime import datetime, timedelta
 from pathlib import Path
 
@@ -675,9 +678,13 @@ def git_push():
         ["git", "commit", "-m", f"feat: ETH日报 {DATE_DISP}"],
         ["git", "push", "origin", "master"],
     ]:
-        r = subprocess.run(cmd, cwd=str(ETH_DIR), capture_output=True, text=True)
-        if r.returncode != 0 and "nothing to commit" not in r.stderr:
-            print(f"[WARN] {' '.join(cmd)}: {r.stderr.strip()}")
+        try:
+            r = subprocess.run(cmd, cwd=str(ETH_DIR), capture_output=True,
+                             encoding='utf-8', errors='ignore')
+            if r.returncode != 0 and "nothing to commit" not in r.stderr:
+                print(f"[WARN] {' '.join(cmd)}: {r.stderr.strip()}")
+        except Exception as e:
+            print(f"[WARN] git error: {e}")
 
 
 # ─── 主流程 ─────────────────────────────────────────────────
