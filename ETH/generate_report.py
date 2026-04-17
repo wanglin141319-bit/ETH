@@ -1,20 +1,19 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""ETH Daily Report v2.0 - Complete rewrite with 7 sections"""
+"""ETH Daily Report Generator - Standalone version with better error handling"""
 import sys, io
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
 
-import requests, json, os, subprocess, re
+import json, os, subprocess, re
 from datetime import datetime, timedelta
 from pathlib import Path
 
-ETH_DIR   = Path(r"C:/Users/ZhuanZ（无密码）/mk-trading/ETH")
+ETH_DIR   = Path(r"C:\Users\ZhuanZ（无密码）\mk-trading\ETH")
 REPORTS   = ETH_DIR / "reports"
 DATA_FILE = ETH_DIR / "strategy_data.json"
 INDEX     = ETH_DIR / "index.html"
-COINGECKO = "https://api.coingecko.com/api/v3"
-COINGLASS = "https://open-api.coinglass.com/public/v2"
+FETCH_RESULT = ETH_DIR / "fetch_result.json"
 
 today    = datetime.now()
 DATE_STR = today.strftime("%Y%m%d")
@@ -22,9 +21,36 @@ DATE_DISP = today.strftime("%Y年%m月%d日")
 DATE_FILE = today.strftime("%Y-%m-%d")
 REPORT_PATH = REPORTS / f"ETH_daily_report_{DATE_STR}.html"
 
+# Check if report already exists
+if REPORT_PATH.exists():
+    print(f"今日报告已存在: {REPORT_PATH}")
+    sys.exit(0)
+
+# Load fetched data
+with open(FETCH_RESULT, "r", encoding="utf-8") as f:
+    fetched = json.load(f)
+
+# Use Binance for yesterday close
+yesterday_close = fetched.get("yesterday_close", 0)
+if not yesterday_close:
+    yesterday_close = fetched.get("price_usd", 0)
+
+ec = {
+    "price_usd": fetched["price_usd"],
+    "price_cny": fetched.get("price_cny", fetched["price_usd"] * 7.24),
+    "change_24h": fetched.get("change_24h", 0),
+    "mcap": fetched.get("mcap", 0),
+    "vol_24h": fetched.get("vol_24h", 0),
+}
+ey = yesterday_close
+f_rate = fetched.get("funding_rate", 0.01)
+oi_d = {"usd": fetched.get("oi_usd", 0), "chg": fetched.get("oi_chg", 0)}
+liq_d = {"total": fetched.get("liq_total", 0), "long_pct": fetched.get("liq_long_pct", 50), "short_pct": 100 - fetched.get("liq_long_pct", 50)}
+
+print(f"ETH: ${ec['price_usd']:,.2f}, 24h: {ec['change_24h']:.2f}%, Yesterday: ${ey:,.2f}")
+print(f"Funding: {f_rate:.4f}%, OI: {oi_d['usd']}, Liq: {liq_d['total']}")
 
 # ─── JSON 数据持久化 ─────────────────────────────────────────
-
 def load_data():
     if not DATA_FILE.exists():
         return default_data()
@@ -51,108 +77,16 @@ def get_last_14(data):
             out.append({"date": ds, "date_display": d.strftime("%m月%d日"), "filled": False})
     return out
 
-
-# ─── 数据获取 ────────────────────────────────────────────────
-
-def fetch_eth():
-    try:
-        url = (f"{COINGECKO}/simple/price?ids=ethereum"
-               "&vs_currencies=usd,cny"
-               "&include_24hr_change=true"
-               "&include_market_cap=true"
-               "&include_24hr_vol=true")
-        r = requests.get(url, timeout=30); r.raise_for_status()
-        d = r.json()["ethereum"]
-        return {"price_usd": d["usd"],
-                "price_cny": d.get("cny", d["usd"]*7.24),
-                "change_24h": d.get("usd_24h_change", 0),
-                "mcap": d.get("usd_market_cap", 0),
-                "vol_24h": d.get("usd_24h_vol", 0)}
-    except Exception as e:
-        print(f"[WARN] ETH价格: {e}")
-        return {"price_usd": 0, "price_cny": 0, "change_24h": 0, "mcap": 0, "vol_24h": 0}
-
-def fetch_yesterday_eth(price_usd):
-    try:
-        url = f"{COINGECKO}/coins/ethereum/ohlc?vs_currency=usd&days=2"
-        r = requests.get(url, timeout=30); r.raise_for_status()
-        ohlc = r.json()
-        if len(ohlc) >= 2:
-            return float(ohlc[-2][4])
-    except: pass
-    return price_usd
-
-def fetch_funding():
-    try:
-        url = "https://fapi.binance.com/fapi/v1/premiumIndex"
-        r = requests.get(url, timeout=15); r.raise_for_status()
-        for item in r.json():
-            if item.get("symbol") == "ETHUSDT":
-                return float(item.get("lastFundingRate", 0)) * 100
-    except: pass
-    return 0.0100
-
-def fetch_oi():
-    try:
-        url = f"{COINGLASS}/open_interest?symbol=ETH"
-        r = requests.get(url, timeout=15); r.raise_for_status()
-        data = r.json()
-        if data.get("data"):
-            item = data["data"][0]
-            return {"usd": float(item.get("openInterest", 0)),
-                    "chg": float(item.get("openInterestChange", 0))}
-    except: pass
-    return {"usd": 0, "chg": 0}
-
-def fetch_liq():
-    try:
-        url = f"{COINGLASS}/liquidation?symbol=ETH"
-        r = requests.get(url, timeout=15); r.raise_for_status()
-        data = r.json()
-        if data.get("data"):
-            item = data["data"][0]
-            total = float(item.get("total", 0))
-            lp = float(item.get("longPercent", 50))
-            return {"total": total, "long_pct": lp, "short_pct": 100-lp}
-    except: pass
-    return {"total": 0, "long_pct": 50, "short_pct": 50}
-
-def calc_levels(price):
-    return {
-        "r3": round(price*1.05, 2), "r2": round(price*1.03, 2),
-        "r1": round(price*1.015, 2), "pivot": round(price, 2),
-        "s1": round(price*0.985, 2), "s2": round(price*0.97, 2),
-        "s3": round(price*0.95, 2)
-    }
-
-
-# ─── 今日记录生成 ────────────────────────────────────────────
-
-def build_today(ec, ey, f, oi_d, liq_d, lv):
-    rec = {
-        "date": DATE_FILE, "date_display": DATE_DISP, "filled": True,
-        "price_current": ec["price_usd"], "price_yesterday": round(ey, 2),
-        "change_24h": round(ec["change_24h"], 2),
-        "change_sign": "+" if ec["change_24h"] >= 0 else "",
-        "funding_rate": round(f, 4),
-        "open_interest_usd": oi_d["usd"], "open_interest_chg": round(oi_d["chg"], 2),
-        "liquidation_usd": liq_d["total"], "liq_long_pct": liq_d["long_pct"],
-        "levels": lv,
-        "direction": "", "entry_price": 0, "stop_loss": 0, "take_profit": 0,
-        "review": "", "error_type": "", "error_desc": ""
-    }
-    # 合并用户已有填写
-    data = load_data()
-    existing = next((r for r in data["strategy_history"] if r.get("date") == DATE_FILE), None)
-    if existing:
-        for k in ["direction","entry_price","stop_loss","take_profit","review","error_type","error_desc"]:
-            if existing.get(k):
-                rec[k] = existing[k]
-    return rec
-
+# ─── 支撑阻力 ────────────────────────────────────────────────
+price = ec["price_usd"]
+lv = {
+    "r3": round(price*1.05, 2), "r2": round(price*1.03, 2),
+    "r1": round(price*1.015, 2), "pivot": round(price, 2),
+    "s1": round(price*0.985, 2), "s2": round(price*0.97, 2),
+    "s3": round(price*0.95, 2)
+}
 
 # ─── 统计 ────────────────────────────────────────────────────
-
 def win_rate(log):
     if not log: return {"total":0,"win":0,"loss":0,"rate":0,"avg_win":0,"avg_loss":0}
     wins, losses = [], []
@@ -180,14 +114,43 @@ def monthly_review(log, data):
         "biggest_loss": min((t["pnl_pct"] for t in mlog), default=0)
     }
 
+# ─── Build today record ──────────────────────────────────────
+rec = {
+    "date": DATE_FILE, "date_display": DATE_DISP, "filled": True,
+    "price_current": ec["price_usd"], "price_yesterday": round(ey, 2),
+    "change_24h": round(ec["change_24h"], 2),
+    "change_sign": "+" if ec["change_24h"] >= 0 else "",
+    "funding_rate": round(f_rate, 4),
+    "open_interest_usd": oi_d["usd"], "open_interest_chg": round(oi_d["chg"], 2),
+    "liquidation_usd": liq_d["total"], "liq_long_pct": liq_d["long_pct"],
+    "levels": lv,
+    "direction": "", "entry_price": 0, "stop_loss": 0, "take_profit": 0,
+    "review": "", "error_type": "", "error_desc": ""
+}
+data = load_data()
+existing = next((r for r in data["strategy_history"] if r.get("date") == DATE_FILE), None)
+if existing:
+    for k in ["direction","entry_price","stop_loss","take_profit","review","error_type","error_desc"]:
+        if existing.get(k):
+            rec[k] = existing[k]
 
-# ─── Twitter 素材 ────────────────────────────────────────────
+# Merge into strategy_history
+data["strategy_history"] = [
+    r for r in data["strategy_history"] if r.get("date") != DATE_FILE
+] + [rec]
+cutoff = (datetime.now() - timedelta(days=180)).strftime("%Y-%m-%d")
+data["strategy_history"] = [r for r in data["strategy_history"] if r.get("date","0") >= cutoff]
+save_data(data)
 
+wr = win_rate(data.get("trade_log", []))
+mr = monthly_review(data.get("trade_log", []), data)
+
+# ─── Twitter copy ────────────────────────────────────────────
 def twitter_copy(ec, ey, lv, rec, f, wr, mr):
     s = "+" if ec["change_24h"] >= 0 else ""
     emoji = "ETH" if ec["change_24h"] >= 0 else "ETH"
     d_map = {"多头":"LONG","空头":"SHORT","观望":"WAIT","震荡":"RANGE","":"TBD"}
-    direction = d_map.get(rec.get("direction",""), rec.get("direction","—"))
+    direction = d_map.get(rec.get("direction",""), rec.get("direction","--"))
     entry_info = f"Entry: ${rec['entry_price']:,.2f}" if rec.get("entry_price") else ""
     return (
         f"{emoji} Daily Report {today.strftime('%Y-%m-%d')}\n\n"
@@ -202,9 +165,9 @@ def twitter_copy(ec, ey, lv, rec, f, wr, mr):
         f"#ETH #Ethereum #CryptoTrading"
     )
 
+tw = twitter_copy(ec, ey, lv, rec, f_rate, wr, mr)
 
-# ─── 辅助函数 ────────────────────────────────────────────────
-
+# ─── Helper functions ────────────────────────────────────────
 def fn(n, d=2):
     if not n: return "N/A"
     a = abs(n)
@@ -224,33 +187,30 @@ def sc(label, value, sub="", cls=""):
             f'<div class="stat-val">{value}</div>'
             f'{f"<div class=stat-sub>{sub}</div>" if sub else ""}</div>')
 
+# ─── HTML Generation ─────────────────────────────────────────
+last14 = get_last_14(data)
+trade_log = data.get("trade_log", [])
+error_log  = data.get("error_log", [])
 
-# ─── HTML 生成 ────────────────────────────────────────────────
+chg_c = c(ec["change_24h"])
+sign = "+" if ec["change_24h"] >= 0 else ""
 
-def gen_html(ec, ey, f, oi_d, liq_d, lv, data, rec, wr, mr):
-    last14 = get_last_14(data)
-    trade_log = data.get("trade_log", [])
-    error_log  = data.get("error_log", [])
-    tw = twitter_copy(ec, ey, lv, rec, f, wr, mr)
-    chg_c = c(ec["change_24h"])
-    sign = "+" if ec["change_24h"] >= 0 else ""
-
-    # 14天行
-    hrows = ""
-    for day in last14:
-        d = day.get("date_display","")
-        if day.get("filled"):
-            chg = day.get("change_24h", 0)
-            cs = "+" if chg >= 0 else ""
-            cc = c(chg)
-            dm = {"多头":"&#128998;做多","空头":"&#129001;做空","观望":"&#9208;观望","震荡":"&#129504;震荡","":"—"}
-            direction = dm.get(day.get("direction",""), day.get("direction","—"))
-            rev = (day.get("review","") or "暂无")[:40]
-            err_tag = (f'<span class="err-tag">&#9888; {day.get("error_type","")}</span>'
-                       if day.get("error_type") else "")
-            entry = (f"入场 ${day.get('entry_price',0):,.0f}"
-                     if day.get("entry_price") else "")
-            hrows += f"""<tr>
+# 14-day rows
+hrows = ""
+for day in last14:
+    d = day.get("date_display","")
+    if day.get("filled"):
+        chg = day.get("change_24h", 0)
+        cs = "+" if chg >= 0 else ""
+        cc = c(chg)
+        dm = {"多头":"&#128998;做多","空头":"&#129001;做空","观望":"&#9208;观望","震荡":"&#129504;震荡","":"&#8212;"}
+        direction = dm.get(day.get("direction",""), day.get("direction","&#8212;"))
+        rev = (day.get("review","") or "暂无")[:40]
+        err_tag = (f'<span class="err-tag">&#9888; {day.get("error_type","")}</span>'
+                   if day.get("error_type") else "")
+        entry = (f"入场 ${day.get('entry_price',0):,.0f}"
+                 if day.get("entry_price") else "")
+        hrows += f"""<tr>
 <td>{d}</td>
 <td style="color:{cc}">{cs}{chg:.2f}%</td>
 <td>{direction}</td>
@@ -258,40 +218,36 @@ def gen_html(ec, ey, f, oi_d, liq_d, lv, data, rec, wr, mr):
 <td class="review-cell">{rev}</td>
 <td>{err_tag}</td>
 </tr>"""
-        else:
-            hrows += f"""<tr class="empty-row"><td>{d}</td><td colspan="5" class="empty-cell">— 无记录 —</td></tr>"""
+    else:
+        hrows += f"""<tr class="empty-row"><td>{d}</td><td colspan="5" class="empty-cell">&#8212; 无记录 &#8212;</td></tr>"""
 
-    # 错误
-    erows = ""
-    for err in error_log[-10:][::-1]:
-        erows += f"""<div class="error-card">
+# Error rows
+erows = ""
+for err in error_log[-10:][::-1]:
+    erows += f"""<div class="error-card">
 <div class="error-header"><span class="err-date">{err.get('date','')}</span>
 <span class="err-type">{err.get('type','')}</span></div>
 <div class="err-desc">{err.get('desc','')}</div></div>"""
-    if not erows: erows = '<div class="empty-msg">暂无错误记录，保持良好习惯！</div>'
+if not erows: erows = '<div class="empty-msg">暂无错误记录，保持良好习惯！</div>'
 
-    # 交易
-    tcards = ""
-    for t in trade_log[-5:][::-1]:
-        pc = c(t.get("pnl_pct", 0))
-        ps = "+" if t.get("pnl_pct", 0) >= 0 else ""
-        di = {"多头":"&#128998;","空头":"&#129001;","震荡":"&#129504;","观望":"&#9208;"}.get(t.get("direction",""), "&#128202;")
-        tcards += f"""<div class="trade-card">
+# Trade cards
+tcards = ""
+for t in trade_log[-5:][::-1]:
+    pc = c(t.get("pnl_pct", 0))
+    ps = "+" if t.get("pnl_pct", 0) >= 0 else ""
+    di = {"多头":"&#128998;","空头":"&#129001;","震荡":"&#129504;","观望":"&#9208;"}.get(t.get("direction",""), "&#128202;")
+    tcards += f"""<div class="trade-card">
 <div class="trade-dir">{di} {t.get('direction','')}</div>
-<div class="trade-price">入 ${t.get('entry',0):,.2f} → 出 ${t.get('exit',0):,.2f}</div>
+<div class="trade-price">入 ${t.get('entry',0):,.2f} &#8594; 出 ${t.get('exit',0):,.2f}</div>
 <div class="trade-pnl" style="color:{pc}">{ps}{t.get('pnl_pct',0):+.2f}%</div></div>"""
-    if not tcards: tcards = '<div class="empty-msg">暂无交易记录</div>'
+if not tcards: tcards = '<div class="empty-msg">暂无交易记录</div>'
 
-    mpnl_c = c(mr["total_pnl_pct"])
-    wr_c = c(wr["rate"]-50)
+mpnl_c = c(mr["total_pnl_pct"])
+wr_c = c(wr["rate"]-50)
 
-    # CSS（避免在 f-string 中使用 {{}} 包裹含 - 的内容，改用字符串拼接）
-    media_css_open  = "@media(max-width:768px){.levels-wrap"
-    media_css_body  = ",.edit-row,.edit-row3{grid-template-columns:1fr}}"
-    media_css_close = "}"
-    media_block = media_css_open + media_css_body + media_css_close
+media_css = "@media(max-width:768px){.levels-wrap,.edit-row,.edit-row3{grid-template-columns:1fr}}"
 
-    html = f"""<!DOCTYPE html>
+html = f"""<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -411,7 +367,7 @@ tr:last-child td{{border-bottom:none}}
 
 .empty-msg{{color:var(--muted);text-align:center;padding:30px;font-size:.9em}}
 
-{media_block}
+{media_css}
 </style>
 </head>
 <body>
@@ -422,13 +378,13 @@ tr:last-child td{{border-bottom:none}}
   <div class="hero-top">
     <div>
       <div class="hero-title">ETH Daily Report</div>
-      <div class="hero-sub">{DATE_DISP} &nbsp;|&nbsp; 数据来源：CoinGecko</div>
+      <div class="hero-sub">{DATE_DISP} &nbsp;|&nbsp; 数据来源：CoinGecko / Binance</div>
     </div>
     <div class="hero-badge">{sign}{ec['change_24h']:.2f}% (24h)</div>
   </div>
   <div class="price-block">
     <div><div class="price-label">当前价格</div><div class="price-main">${ec['price_usd']:,.2f}</div></div>
-    <div><div class="price-label">≈ CNY</div><div class="price-main" style="font-size:1.8em">¥{ec['price_cny']:,.2f}</div></div>
+    <div><div class="price-label">&#8776; CNY</div><div class="price-main" style="font-size:1.8em">&#165;{ec['price_cny']:,.2f}</div></div>
     <div><div class="price-label">昨日收盘</div><div class="price-yest">${ey:,.2f}</div></div>
   </div>
 </div>
@@ -440,7 +396,7 @@ tr:last-child td{{border-bottom:none}}
     {sc("当前价格", f"${ec['price_usd']:,.2f}")}
     {sc("昨日收盘", f"${ey:,.2f}")}
     {sc("24h涨跌", f"{sign}{ec['change_24h']:.2f}%", "CoinGecko")}
-    {sc("资金费率", f"{f:.4f}%", "Binance 8h")}
+    {sc("资金费率", f"{f_rate:.4f}%", "Binance 8h")}
     {sc("未平仓合约", fn(oi_d['usd']), f"OI变化 {oi_d['chg']:+.2f}%", "CoinGlass")}
     {sc("24h爆仓", fn(liq_d['total']), f"多{liq_d['long_pct']:.0f}%/空{liq_d['short_pct']:.0f}%", "CoinGlass")}
     {sc("市值", fn(ec['mcap']), "USD")}
@@ -556,7 +512,7 @@ tr:last-child td{{border-bottom:none}}
     <div class="edit-field">
       <label>今日方向</label>
       <select id="f-direction">
-        <option value="">— 选择方向 —</option>
+        <option value="">&#8212; 选择方向 &#8212;</option>
         <option value="多头">&#128998; 多头 LONG</option>
         <option value="空头">&#129001; 空头 SHORT</option>
         <option value="震荡">&#129504; 震荡 RANGE</option>
@@ -565,17 +521,17 @@ tr:last-child td{{border-bottom:none}}
     </div>
     <div class="edit-field">
       <label>入场价格</label>
-      <input type="number" id="f-entry" step="0.01" placeholder="如 3456.78">
+      <input type="number" id="f-entry" step="0.01" placeholder="如 2356.78">
     </div>
   </div>
   <div class="edit-row">
     <div class="edit-field">
       <label>止损价格</label>
-      <input type="number" id="f-stop" step="0.01" placeholder="如 3400.00">
+      <input type="number" id="f-stop" step="0.01" placeholder="如 2300.00">
     </div>
     <div class="edit-field">
       <label>止盈价格</label>
-      <input type="number" id="f-target" step="0.01" placeholder="如 3600.00">
+      <input type="number" id="f-target" step="0.01" placeholder="如 2450.00">
     </div>
   </div>
   <div class="edit-field" style="margin-bottom:12px">
@@ -586,7 +542,7 @@ tr:last-child td{{border-bottom:none}}
     <div class="edit-field">
       <label>错误类型</label>
       <select id="f-err-type">
-        <option value="">— 无错误 —</option>
+        <option value="">&#8212; 无错误 &#8212;</option>
         <option value="重仓">&#9888; 重仓</option>
         <option value="逆势">&#9888; 逆势</option>
         <option value="不止损">&#9888; 不止损</option>
@@ -632,14 +588,16 @@ function copyTw() {{
 </script>
 </body>
 </html>"""
-    return html
 
+# Write report
+REPORTS.mkdir(parents=True, exist_ok=True)
+with open(REPORT_PATH, "w", encoding="utf-8") as f:
+    f.write(html)
+print(f"报告已保存: {REPORT_PATH}")
 
-# ─── 索引更新 ────────────────────────────────────────────────
-
-def update_index(name):
-    if not INDEX.exists():
-        body = f"""<!DOCTYPE html>
+# ─── Update index.html ───────────────────────────────────────
+if not INDEX.exists():
+    body = f"""<!DOCTYPE html>
 <html lang="zh-CN">
 <head><meta charset="UTF-8"><title>ETH 日报归档</title>
 <style>
@@ -656,80 +614,39 @@ body{{font-family:sans-serif;background:#0d1117;color:#e6edf3;padding:20px}}
 <body><div class="wrap">
 <div class="hero"><h1>&#128202; ETH 日报归档</h1><p>每日策略追踪与复盘</p></div>
 <div class="report-list">
-<div class="report-item"><span class="report-date">{DATE_DISP}</span><a href="reports/{name}" class="report-link">查看报告</a></div>
+<div class="report-item"><span class="report-date">{DATE_DISP}</span><a href="reports/{REPORT_PATH.name}" class="report-link">查看报告</a></div>
 </div>
 </div></body></html>"""
-    else:
-        with open(INDEX, "r", encoding="utf-8") as f:
-            body = f.read()
-        new_item = f'<div class="report-item"><span class="report-date">{DATE_DISP}</span><a href="reports/{name}" class="report-link">查看报告</a></div>'
-        body = re.sub(r'(<div class="report-list">)',
-                      r'\1\n            ' + new_item, body)
-    with open(INDEX, "w", encoding="utf-8") as f:
-        f.write(body)
-    print(f"✅ 索引已更新: {INDEX}")
+else:
+    with open(INDEX, "r", encoding="utf-8") as f:
+        body = f.read()
+    new_item = f'<div class="report-item"><span class="report-date">{DATE_DISP}</span><a href="reports/{REPORT_PATH.name}" class="report-link">查看报告</a></div>'
+    body = re.sub(r'(<div class="report-list">)',
+                  r'\1\n            ' + new_item, body)
+with open(INDEX, "w", encoding="utf-8") as f:
+    f.write(body)
+print(f"索引已更新: {INDEX}")
 
+# ─── Git push ────────────────────────────────────────────────
+# Configure proxy first
+try:
+    subprocess.run(["git", "config", "--local", "http.proxy", "http://127.0.0.1:33210"],
+                   cwd=str(ETH_DIR), capture_output=True, encoding='utf-8', errors='ignore')
+except: pass
 
-# ─── Git 推送 ───────────────────────────────────────────────
+for cmd in [
+    ["git", "add", "."],
+    ["git", "commit", "-m", f"feat: ETH日报 {DATE_DISP}"],
+    ["git", "push", "origin", "master"],
+]:
+    try:
+        r = subprocess.run(cmd, cwd=str(ETH_DIR), capture_output=True,
+                         encoding='utf-8', errors='ignore')
+        if r.returncode != 0 and "nothing to commit" not in r.stderr:
+            print(f"[WARN] {' '.join(cmd)}: {r.stderr.strip()}")
+        else:
+            print(f"[OK] {' '.join(cmd)}")
+    except Exception as e:
+        print(f"[WARN] git error: {e}")
 
-def git_push():
-    for cmd in [
-        ["git", "add", "."],
-        ["git", "commit", "-m", f"feat: ETH日报 {DATE_DISP}"],
-        ["git", "push", "origin", "master"],
-    ]:
-        try:
-            r = subprocess.run(cmd, cwd=str(ETH_DIR), capture_output=True,
-                             encoding='utf-8', errors='ignore')
-            if r.returncode != 0 and "nothing to commit" not in r.stderr:
-                print(f"[WARN] {' '.join(cmd)}: {r.stderr.strip()}")
-        except Exception as e:
-            print(f"[WARN] git error: {e}")
-
-
-# ─── 主流程 ─────────────────────────────────────────────────
-
-def main():
-    print(f"=== ETH 日报 {DATE_DISP} ===")
-    if REPORT_PATH.exists():
-        print(f"今日报告已存在: {REPORT_PATH}")
-        return 0
-
-    REPORTS.mkdir(parents=True, exist_ok=True)
-    print("📡 获取数据...")
-    ec  = fetch_eth()
-    if not ec["price_usd"]:
-        print("[ERROR] 无法获取ETH价格"); return 1
-    ey  = fetch_yesterday_eth(ec["price_usd"])
-    f   = fetch_funding()
-    oi  = fetch_oi()
-    liq = fetch_liq()
-    lv  = calc_levels(ec["price_usd"])
-
-    data = load_data()
-    rec  = build_today(ec, ey, f, oi, liq, lv)
-    # 追加今日记录（去重）
-    data["strategy_history"] = [
-        r for r in data["strategy_history"] if r.get("date") != DATE_FILE
-    ] + [rec]
-    # 保留180天
-    cutoff = (datetime.now() - timedelta(days=180)).strftime("%Y-%m-%d")
-    data["strategy_history"] = [r for r in data["strategy_history"] if r.get("date","0") >= cutoff]
-    save_data(data)
-
-    wr = win_rate(data.get("trade_log", []))
-    mr = monthly_review(data.get("trade_log", []), data)
-
-    print("📝 生成报告...")
-    html = gen_html(ec, ey, f, oi, liq, lv, data, rec, wr, mr)
-    with open(REPORT_PATH, "w", encoding="utf-8") as f:
-        f.write(html)
-    print(f"✅ 报告已保存: {REPORT_PATH}")
-    update_index(REPORT_PATH.name)
-    print("🔄 推送 GitHub...")
-    git_push()
-    print("=== 完成 ===")
-    return 0
-
-if __name__ == "__main__":
-    sys.exit(main())
+print("=== 完成 ===")

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ETH 日报 2026年04月14日</title>
+<title>ETH 日报 2026年04月17日</title>
 <style>
 :root{--bg:#0d1117;--card:#161b22;--border:#30363d;--text:#e6edf3;
        --muted:#8b949e;--accent:#58a6ff;--green:#3fb950;--red:#f85149;
@@ -20,7 +20,7 @@ body{font-family:'PingFang SC','Microsoft YaHei',sans-serif;
 .hero-title{font-size:1.8em;font-weight:700;color:#fff}
 .hero-sub{color:var(--muted);margin-top:4px;font-size:.9em}
 .hero-badge{padding:6px 16px;border-radius:20px;font-size:.85em;
-             background:#3fb95022;color:#3fb950;border:1px solid #3fb95044}
+             background:rgba(248,81,73,0.13);color:#f85149;border:1px solid rgba(248,81,73,0.27)}
 .price-block{display:flex;gap:40px;flex-wrap:wrap;margin-top:20px}
 .price-main{font-size:2.6em;font-weight:700;color:#fff;letter-spacing:-1px}
 .price-label{color:var(--muted);font-size:.8em;margin-bottom:4px}
@@ -61,7 +61,7 @@ tr:last-child td{border-bottom:none}
 .empty-row td{opacity:.4}
 .empty-cell{text-align:center;color:var(--muted)}
 .review-cell{color:var(--muted);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.err-tag{background:var(--red)22;color:var(--red);padding:2px 8px;border-radius:10px;font-size:.8em}
+.err-tag{background:rgba(248,81,73,0.13);color:var(--red);padding:2px 8px;border-radius:10px;font-size:.8em}
 
 /* Winrate */
 .winrate-ring{display:flex;align-items:center;gap:30px;flex-wrap:wrap}
@@ -81,7 +81,7 @@ tr:last-child td{border-bottom:none}
               padding:14px 16px;margin-bottom:10px}
 .error-header{display:flex;justify-content:space-between;margin-bottom:6px}
 .err-date{color:var(--muted);font-size:.85em}
-.err-type{background:var(--red)22;color:var(--red);padding:2px 10px;border-radius:10px;font-size:.8em}
+.err-type{background:rgba(248,81,73,0.13);color:var(--red);padding:2px 10px;border-radius:10px;font-size:.8em}
 .err-desc{color:var(--text);font-size:.9em;line-height:1.5}
 
 /* Trade */
@@ -96,12 +96,12 @@ tr:last-child td{border-bottom:none}
          font-family:monospace;font-size:.9em;line-height:1.8;white-space:pre-wrap;
          color:var(--text);position:relative}
 .tw-copy-btn{position:absolute;top:14px;right:14px;padding:6px 16px;
-              background:var(--accent)22;color:var(--accent);border:1px solid var(--accent)44;
+              background:rgba(88,166,255,0.13);color:var(--accent);border:1px solid rgba(88,166,255,0.27);
               border-radius:8px;cursor:pointer;font-size:.8em}
 .tw-footer{margin-top:12px;padding-top:12px;border-top:1px solid var(--border);color:var(--muted);font-size:.8em}
 
 /* Edit */
-.edit-zone{background:#1c2128;border:1px solid var(--yellow)44;border-radius:12px;
+.edit-zone{background:#1c2128;border:1px solid rgba(210,153,34,0.27);border-radius:12px;
             padding:20px;margin-bottom:20px}
 .edit-zone h4{color:var(--yellow);margin-bottom:14px;font-size:.95em}
 .edit-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
@@ -118,7 +118,7 @@ tr:last-child td{border-bottom:none}
 
 .empty-msg{color:var(--muted);text-align:center;padding:30px;font-size:.9em}
 
-@media(max-width:768px){.levels-wrap,.edit-row,.edit-row3{grid-template-columns:1fr}}}
+@media(max-width:768px){.levels-wrap,.edit-row,.edit-row3{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -129,95 +129,103 @@ tr:last-child td{border-bottom:none}
   <div class="hero-top">
     <div>
       <div class="hero-title">ETH Daily Report</div>
-      <div class="hero-sub">2026年04月14日 &nbsp;|&nbsp; 数据来源：CoinGecko</div>
+      <div class="hero-sub">2026年04月17日 &nbsp;|&nbsp; 数据来源：CoinGecko / Binance</div>
     </div>
-    <div class="hero-badge">+8.78% (24h)</div>
+    <div class="hero-badge">-0.77% (24h)</div>
   </div>
   <div class="price-block">
-    <div><div class="price-label">当前价格</div><div class="price-main">$2,373.12</div></div>
-    <div><div class="price-label">≈ CNY</div><div class="price-main" style="font-size:1.8em">¥16,174.94</div></div>
-    <div><div class="price-label">昨日收盘</div><div class="price-yest">$2,373.12</div></div>
+    <div><div class="price-label">当前价格</div><div class="price-main">$2,333.56</div></div>
+    <div><div class="price-label">≈ CNY</div><div class="price-main" style="font-size:1.8em">¥15,918.18</div></div>
+    <div><div class="price-label">昨日收盘</div><div class="price-yest">$2,348.17</div></div>
   </div>
 </div>
 
 <!-- S1: 数据面板 -->
 <div class="card">
-  <div class="sec-title"><span class="sec-icon">&#128202;</span><span>1. 数据统计面板</span></div>
+  <div class="sec-title"><span class="sec-icon">📊</span><span>1. 数据统计面板</span></div>
   <div class="stat-grid">
-    <div class="stat-card "><div class="stat-lbl">当前价格</div><div class="stat-val">$2,373.12</div></div>
-    <div class="stat-card "><div class="stat-lbl">昨日收盘</div><div class="stat-val">$2,373.12</div></div>
-    <div class="stat-card "><div class="stat-lbl">24h涨跌</div><div class="stat-val">+8.78%</div><div class=stat-sub>CoinGecko</div></div>
-    <div class="stat-card "><div class="stat-lbl">资金费率</div><div class="stat-val">0.0100%</div><div class=stat-sub>Binance 8h</div></div>
-    <div class="stat-card CoinGlass"><div class="stat-lbl">未平仓合约</div><div class="stat-val">N/A</div><div class=stat-sub>OI变化 +0.00%</div></div>
-    <div class="stat-card CoinGlass"><div class="stat-lbl">24h爆仓</div><div class="stat-val">N/A</div><div class=stat-sub>多50%/空50%</div></div>
-    <div class="stat-card "><div class="stat-lbl">市值</div><div class="stat-val">$286.27B</div><div class=stat-sub>USD</div></div>
-    <div class="stat-card "><div class="stat-lbl">24h成交量</div><div class="stat-val">$28.90B</div><div class=stat-sub>USD</div></div>
+    <div class="stat-card"><div class="stat-lbl">当前价格</div><div class="stat-val">$2,333.56</div></div>
+    <div class="stat-card"><div class="stat-lbl">昨日收盘</div><div class="stat-val">$2,348.17</div></div>
+    <div class="stat-card"><div class="stat-lbl">24h涨跌</div><div class="stat-val" style="color:#f85149">-0.77%</div><div class="stat-sub">CoinGecko</div></div>
+    <div class="stat-card"><div class="stat-lbl">资金费率</div><div class="stat-val">0.0018%</div><div class="stat-sub">Binance 8h</div></div>
+    <div class="stat-card"><div class="stat-lbl">未平仓合约</div><div class="stat-val">$4.92B</div><div class="stat-sub">2,106,645 ETH | Binance</div></div>
+    <div class="stat-card"><div class="stat-lbl">24h合约成交</div><div class="stat-val">$10.57B</div><div class="stat-sub">6.36M 笔 | Binance</div></div>
+    <div class="stat-card"><div class="stat-lbl">市值</div><div class="stat-val">$281.6B</div><div class="stat-sub">USD</div></div>
+    <div class="stat-card"><div class="stat-lbl">24h现货成交量</div><div class="stat-val">$19.1B</div><div class="stat-sub">USD</div></div>
   </div>
 </div>
 
 <!-- 支撑阻力 -->
 <div class="card">
-  <div class="sec-title"><span class="sec-icon">&#128205;</span><span>关键支撑阻力位</span></div>
+  <div class="sec-title"><span class="sec-icon">📍</span><span>关键支撑阻力位</span></div>
   <div class="levels-wrap">
     <div class="level-col">
       <h4>阻力位 Resistance</h4>
-      <div class="level-row level-r"><span>R3</span><span>$2,491.78</span></div>
-      <div class="level-row level-r"><span>R2</span><span>$2,444.31</span></div>
-      <div class="level-row level-r"><span>R1</span><span>$2,408.72</span></div>
-      <div class="level-row level-p"><span>Pivot</span><span>$2,373.12</span></div>
+      <div class="level-row level-r"><span>R3</span><span>$2,450.24</span></div>
+      <div class="level-row level-r"><span>R2</span><span>$2,403.57</span></div>
+      <div class="level-row level-r"><span>R1</span><span>$2,368.56</span></div>
+      <div class="level-row level-p"><span>Pivot</span><span>$2,333.56</span></div>
     </div>
     <div class="level-col">
       <h4>支撑位 Support</h4>
-      <div class="level-row level-s"><span>S1</span><span>$2,337.52</span></div>
-      <div class="level-row level-s"><span>S2</span><span>$2,301.93</span></div>
-      <div class="level-row level-s"><span>S3</span><span>$2,254.46</span></div>
+      <div class="level-row level-s"><span>S1</span><span>$2,298.56</span></div>
+      <div class="level-row level-s"><span>S2</span><span>$2,263.55</span></div>
+      <div class="level-row level-s"><span>S3</span><span>$2,216.88</span></div>
     </div>
   </div>
 </div>
 
 <!-- 爆仓 -->
 <div class="card">
-  <div class="sec-title"><span class="sec-icon">&#128165;</span><span>24h 爆仓分布</span></div>
-  <div class="liq-bar"><div class="liq-fill">多头 50%</div></div>
+  <div class="sec-title"><span class="sec-icon">💥</span><span>24h 合约成交分布</span></div>
+  <div class="liq-bar"><div class="liq-fill">数据需 API Key</div></div>
   <div style="display:flex;justify-content:space-between;color:var(--muted);font-size:.85em">
-    <span>&#129001; 空头 50%</span>
-    <span>全网爆仓 N/A</span>
+    <span>📉 CoinGlass 爆仓数据需 API Key</span>
+    <span>合约成交额: $10.57B</span>
   </div>
 </div>
 
 <!-- S2: 14天追踪 -->
 <div class="card">
-  <div class="sec-title"><span class="sec-icon">&#128197;</span><span>2. 14天策略追踪</span></div>
+  <div class="sec-title"><span class="sec-icon">📅</span><span>2. 14天策略追踪</span></div>
   <div style="overflow-x:auto">
   <table>
     <thead><tr><th>日期</th><th>涨跌</th><th>方向</th><th>入场</th><th>复盘小结</th><th>错误</th></tr></thead>
-    <tbody><tr class="empty-row"><td>04月01日</td><td colspan="5" class="empty-cell">— 无记录 —</td></tr><tr class="empty-row"><td>04月02日</td><td colspan="5" class="empty-cell">— 无记录 —</td></tr><tr class="empty-row"><td>04月03日</td><td colspan="5" class="empty-cell">— 无记录 —</td></tr><tr class="empty-row"><td>04月04日</td><td colspan="5" class="empty-cell">— 无记录 —</td></tr><tr class="empty-row"><td>04月05日</td><td colspan="5" class="empty-cell">— 无记录 —</td></tr><tr class="empty-row"><td>04月06日</td><td colspan="5" class="empty-cell">— 无记录 —</td></tr><tr class="empty-row"><td>04月07日</td><td colspan="5" class="empty-cell">— 无记录 —</td></tr><tr class="empty-row"><td>04月08日</td><td colspan="5" class="empty-cell">— 无记录 —</td></tr><tr class="empty-row"><td>04月09日</td><td colspan="5" class="empty-cell">— 无记录 —</td></tr><tr class="empty-row"><td>04月10日</td><td colspan="5" class="empty-cell">— 无记录 —</td></tr><tr class="empty-row"><td>04月11日</td><td colspan="5" class="empty-cell">— 无记录 —</td></tr><tr class="empty-row"><td>04月12日</td><td colspan="5" class="empty-cell">— 无记录 —</td></tr><tr class="empty-row"><td>04月13日</td><td colspan="5" class="empty-cell">— 无记录 —</td></tr><tr>
-<td>2026年04月14日</td>
-<td style="color:#3fb950">+8.78%</td>
-<td>—</td>
-<td></td>
-<td class="review-cell">暂无</td>
-<td></td>
-</tr></tbody>
+    <tbody>
+<tr><td>04月04日</td><td colspan="5" class="empty-cell">— 无记录 —</td></tr>
+<tr><td>04月05日</td><td colspan="5" class="empty-cell">— 无记录 —</td></tr>
+<tr><td>04月06日</td><td colspan="5" class="empty-cell">— 无记录 —</td></tr>
+<tr><td>04月07日</td><td colspan="5" class="empty-cell">— 无记录 —</td></tr>
+<tr><td>04月08日</td><td colspan="5" class="empty-cell">— 无记录 —</td></tr>
+<tr><td>04月09日</td><td colspan="5" class="empty-cell">— 无记录 —</td></tr>
+<tr><td>04月10日</td><td colspan="5" class="empty-cell">— 无记录 —</td></tr>
+<tr><td>04月11日</td><td colspan="5" class="empty-cell">— 无记录 —</td></tr>
+<tr><td>04月12日</td><td colspan="5" class="empty-cell">— 无记录 —</td></tr>
+<tr><td>04月13日</td><td colspan="5" class="empty-cell">— 无记录 —</td></tr>
+<tr><td>04月14日</td><td style="color:#3fb950">+8.78%</td><td>—</td><td></td><td class="review-cell">暂无</td><td></td></tr>
+<tr><td>04月15日</td><td style="color:#f85149">-1.18%</td><td>—</td><td></td><td class="review-cell">暂无</td><td></td></tr>
+<tr><td>04月16日</td><td style="color:#3fb950">+1.12%</td><td>—</td><td></td><td class="review-cell">暂无</td><td></td></tr>
+<tr><td>04月17日</td><td style="color:#f85149">-0.77%</td><td>—</td><td></td><td class="review-cell">暂无</td><td></td></tr>
+    </tbody>
   </table>
   </div>
 </div>
 
 <!-- S3: 错误 -->
 <div class="card">
-  <div class="sec-title"><span class="sec-icon">&#9888;</span><span>3. 错误统计（近10条）</span></div>
+  <div class="sec-title"><span class="sec-icon">⚠</span><span>3. 错误统计（近10条）</span></div>
   <div class="empty-msg">暂无错误记录，保持良好习惯！</div>
 </div>
 
 <!-- S4: 方向 -->
 <div class="card">
-  <div class="sec-title"><span class="sec-icon">&#127919;</span><span>4. 做单方向与入场点位（最近5笔）</span></div>
-  <div class="trade-list"><div class="empty-msg">暂无交易记录</div></div>
+  <div class="sec-title"><span class="sec-icon">🎯</span><span>4. 做单方向与入场点位（最近5笔）</span></div>
+  <div class="empty-msg">暂无交易记录</div>
 </div>
 
 <!-- S5: 胜率+月回顾 -->
 <div class="card">
-  <div class="sec-title"><span class="sec-icon">&#128200;</span><span>5. 胜率计算 & 月度回顾</span></div>
+  <div class="sec-title"><span class="sec-icon">📈</span><span>5. 胜率计算 & 月度回顾</span></div>
   <div style="margin-bottom:24px">
     <div style="color:var(--muted);font-size:.9em;margin-bottom:14px">总体胜率</div>
     <div class="winrate-ring">
@@ -226,7 +234,7 @@ tr:last-child td{border-bottom:none}
           <circle cx="60" cy="60" r="50" fill="none" stroke="#21262d" stroke-width="12"/>
           <circle cx="60" cy="60" r="50" fill="none" stroke="#f85149"
             stroke-width="12"
-            stroke-dasharray="0.0 314.0"
+            stroke-dasharray="0 314"
             stroke-linecap="round"/>
         </svg>
         <div class="ring-center">
@@ -235,39 +243,38 @@ tr:last-child td{border-bottom:none}
         </div>
       </div>
       <div class="winrate-cards">
-        <div class="stat-card "><div class="stat-lbl">总交易次数</div><div class="stat-val">0</div></div>
-        <div class="stat-card green"><div class="stat-lbl">盈利次数</div><div class="stat-val">0</div></div>
-        <div class="stat-card red"><div class="stat-lbl">亏损次数</div><div class="stat-val">0</div></div>
-        <div class="stat-card green"><div class="stat-lbl">平均盈利</div><div class="stat-val">+0.00%</div><div class=stat-sub>胜局均值</div></div>
-        <div class="stat-card red"><div class="stat-lbl">平均亏损</div><div class="stat-val">0.00%</div><div class=stat-sub>败局均值</div></div>
+        <div class="stat-card"><div class="stat-lbl">总交易次数</div><div class="stat-val">0</div></div>
+        <div class="stat-card green"><div class="stat-lbl">盈利次数</div><div class="stat-val" style="color:#3fb950">0</div></div>
+        <div class="stat-card red"><div class="stat-lbl">亏损次数</div><div class="stat-val" style="color:#f85149">0</div></div>
+        <div class="stat-card green"><div class="stat-lbl">平均盈利</div><div class="stat-val" style="color:#3fb950">+0.00%</div><div class="stat-sub">胜局均值</div></div>
+        <div class="stat-card red"><div class="stat-lbl">平均亏损</div><div class="stat-val" style="color:#f85149">0.00%</div><div class="stat-sub">败局均值</div></div>
       </div>
     </div>
   </div>
   <div>
     <div style="color:var(--muted);font-size:.9em;margin-bottom:14px">2026-04 月度回顾</div>
     <div class="month-grid">
-      <div class="stat-card "><div class="stat-lbl">交易次数</div><div class="stat-val">0</div></div>
-      <div class="stat-card red"><div class="stat-lbl">月胜率</div><div class="stat-val">0.0%</div></div>
-      <div class="stat-card green"><div class="stat-lbl">月盈亏</div><div class="stat-val">+0.00%</div><div class=stat-sub>累计收益率</div></div>
-      <div class="stat-card green"><div class="stat-lbl">最大盈利</div><div class="stat-val">+0.00%</div></div>
-      <div class="stat-card red"><div class="stat-lbl">最大亏损</div><div class="stat-val">0.00%</div></div>
-      <div class="stat-card red"><div class="stat-lbl">本月错误</div><div class="stat-val">0次</div></div>
+      <div class="stat-card"><div class="stat-lbl">交易次数</div><div class="stat-val">0</div></div>
+      <div class="stat-card red"><div class="stat-lbl">月胜率</div><div class="stat-val" style="color:#f85149">0.0%</div></div>
+      <div class="stat-card red"><div class="stat-lbl">月盈亏</div><div class="stat-val" style="color:#f85149">0.00%</div><div class="stat-sub">累计收益率</div></div>
+      <div class="stat-card green"><div class="stat-lbl">最大盈利</div><div class="stat-val" style="color:#3fb950">+0.00%</div></div>
+      <div class="stat-card red"><div class="stat-lbl">最大亏损</div><div class="stat-val" style="color:#f85149">0.00%</div></div>
+      <div class="stat-card red"><div class="stat-lbl">本月错误</div><div class="stat-val" style="color:#f85149">0次</div></div>
     </div>
   </div>
 </div>
 
 <!-- S6: Twitter -->
 <div class="card">
-  <div class="sec-title"><span class="sec-icon">&#128039;</span><span>6. 英文推特素材</span></div>
-  <div class="tw-box" id="tw-box">ETH Daily Report 2026-04-14
+  <div class="sec-title"><span class="sec-icon">🐦</span><span>6. 英文推特素材</span></div>
+  <div class="tw-box" id="tw-box">ETH Daily Report 2026-04-17
 
-Price: $2,373.12 (+8.78% 24h)
-Yesterday: $2,373.12
-Funding Rate: 0.0100%
-R1: $2,408.72 | S1: $2,337.52
+Price: $2,333.56 (-0.77% 24h)
+Yesterday: $2,348.17
+Funding Rate: 0.0018%
+R1: $2,368.56 | S1: $2,298.56
 
 Bias: TBD
-
 
 This Month: 0 trades | Win Rate: 0.0%
 Total PnL: +0.00% | Errors: 0
@@ -278,16 +285,16 @@ Total PnL: +0.00% | Errors: 0
 
 <!-- S7: 手动填写 -->
 <div class="edit-zone">
-  <h4>&#128221; 每日手动填写（保存后刷新报告）</h4>
+  <h4>📝 每日手动填写（保存后刷新报告）</h4>
   <div class="edit-row">
     <div class="edit-field">
       <label>今日方向</label>
       <select id="f-direction">
         <option value="">— 选择方向 —</option>
-        <option value="多头">&#128998; 多头 LONG</option>
-        <option value="空头">&#129001; 空头 SHORT</option>
-        <option value="震荡">&#129504; 震荡 RANGE</option>
-        <option value="观望">&#9208; 观望 WAIT</option>
+        <option value="多头">🔴 多头 LONG</option>
+        <option value="空头">🟢 空头 SHORT</option>
+        <option value="震荡">🔵 震荡 RANGE</option>
+        <option value="观望">⏳ 观望 WAIT</option>
       </select>
     </div>
     <div class="edit-field">
@@ -314,12 +321,12 @@ Total PnL: +0.00% | Errors: 0
       <label>错误类型</label>
       <select id="f-err-type">
         <option value="">— 无错误 —</option>
-        <option value="重仓">&#9888; 重仓</option>
-        <option value="逆势">&#9888; 逆势</option>
-        <option value="不止损">&#9888; 不止损</option>
-        <option value="追单">&#9888; 追单</option>
-        <option value="扛单">&#9888; 扛单</option>
-        <option value="其他">&#9888; 其他</option>
+        <option value="重仓">⚠ 重仓</option>
+        <option value="逆势">⚠ 逆势</option>
+        <option value="不止损">⚠ 不止损</option>
+        <option value="追单">⚠ 追单</option>
+        <option value="扛单">⚠ 扛单</option>
+        <option value="其他">⚠ 其他</option>
       </select>
     </div>
     <div class="edit-field">
@@ -327,13 +334,13 @@ Total PnL: +0.00% | Errors: 0
       <input type="text" id="f-err-desc" placeholder="如：在阻力位上方追多被止损">
     </div>
   </div>
-  <button class="save-btn" onclick="saveEntry()">&#128190; 保存</button>
+  <button class="save-btn" onclick="saveEntry()">💾 保存</button>
   <div style="clear:both"></div>
 </div>
 
 </div>
 <script>
-const DATE_FILE = "2026-04-14";
+const DATE_FILE = "2026-04-17";
 function saveEntry() {
   const entry = {
     date: DATE_FILE,
