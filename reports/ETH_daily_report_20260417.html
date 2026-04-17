@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ETH 日报 2026年04月17日</title>
+<style>
+:root{--bg:#0d1117;--card:#161b22;--border:#30363d;--text:#e6edf3;
+       --muted:#8b949e;--accent:#58a6ff;--green:#3fb950;--red:#f85149;
+       --yellow:#d29922;--purple:#bc8cff}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'PingFang SC','Microsoft YaHei',sans-serif;
+      background:var(--bg);color:var(--text);min-height:100vh;padding:20px}
+.wrap{max-width:1100px;margin:0 auto}
+
+/* Hero */
+.hero{background:var(--card);border:1px solid var(--border);border-radius:16px;
+        padding:30px 35px;margin-bottom:24px}
+.hero-top{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:16px}
+.hero-title{font-size:1.8em;font-weight:700;color:#fff}
+.hero-sub{color:var(--muted);margin-top:4px;font-size:.9em}
+.hero-badge{padding:6px 16px;border-radius:20px;font-size:.85em;
+             background:#f8514922;color:#f85149;border:1px solid #f8514944}
+.price-block{display:flex;gap:40px;flex-wrap:wrap;margin-top:20px}
+.price-main{font-size:2.6em;font-weight:700;color:#fff;letter-spacing:-1px}
+.price-label{color:var(--muted);font-size:.8em;margin-bottom:4px}
+.price-yest{font-size:1.4em;color:var(--muted)}
+
+/* Cards */
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;
+       padding:22px 24px;margin-bottom:20px}
+.sec-title{display:flex;align-items:center;gap:10px;font-size:1.15em;font-weight:600;
+            color:#fff;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.sec-icon{font-size:1.2em}
+
+/* Stats */
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
+.stat-card{background:#1c2128;border:1px solid var(--border);border-radius:10px;padding:14px 16px}
+.stat-lbl{color:var(--muted);font-size:.8em;margin-bottom:6px}
+.stat-val{font-size:1.4em;font-weight:700;color:#fff}
+.stat-sub{color:var(--muted);font-size:.75em;margin-top:4px}
+
+/* Levels */
+.levels-wrap{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.level-col h4{font-size:.9em;color:var(--muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:1px}
+.level-row{display:flex;justify-content:space-between;padding:8px 12px;
+            border-radius:8px;margin-bottom:6px;background:#1c2128}
+.level-r{color:var(--red)}.level-s{color:var(--green)}.level-p{color:#fff;font-weight:600}
+
+/* Liq */
+.liq-bar{height:22px;background:#1c2128;border-radius:11px;overflow:hidden;margin:12px 0}
+.liq-fill{height:100%;background:linear-gradient(90deg,var(--red),#ff6b6b);
+           display:flex;align-items:center;padding-left:10px;color:#fff;
+           font-size:.8em;font-weight:600;width:50%;transition:width .6s}
+
+/* Table */
+table{width:100%;border-collapse:collapse;font-size:.9em}
+th{text-align:left;padding:10px 12px;color:var(--muted);border-bottom:1px solid var(--border);font-weight:500}
+td{padding:10px 12px;border-bottom:1px solid #21262d}
+tr:last-child td{border-bottom:none}
+.empty-row td{opacity:.4}
+.empty-cell{text-align:center;color:var(--muted)}
+.review-cell{color:var(--muted);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.err-tag{background:var(--red)22;color:var(--red);padding:2px 8px;border-radius:10px;font-size:.8em}
+
+/* Winrate */
+.winrate-ring{display:flex;align-items:center;gap:30px;flex-wrap:wrap}
+.ring{position:relative;width:120px;height:120px;flex-shrink:0}
+.ring svg{transform:rotate(-90deg);width:120px;height:120px}
+.ring-center{position:absolute;inset:0;display:flex;flex-direction:column;
+               align-items:center;justify-content:center}
+.ring-pct{font-size:1.6em;font-weight:700;color:#fff}
+.ring-label{font-size:.75em;color:var(--muted)}
+.winrate-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;flex:1}
+
+/* Month */
+.month-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px}
+
+/* Error */
+.error-card{background:#1c2128;border:1px solid var(--border);border-radius:10px;
+              padding:14px 16px;margin-bottom:10px}
+.error-header{display:flex;justify-content:space-between;margin-bottom:6px}
+.err-date{color:var(--muted);font-size:.85em}
+.err-type{background:var(--red)22;color:var(--red);padding:2px 10px;border-radius:10px;font-size:.8em}
+.err-desc{color:var(--text);font-size:.9em;line-height:1.5}
+
+/* Trade */
+.trade-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.trade-card{background:#1c2128;border:1px solid var(--border);border-radius:10px;padding:14px 16px}
+.trade-dir{font-weight:600;margin-bottom:8px}
+.trade-price{color:var(--muted);font-size:.85em;margin-bottom:6px}
+.trade-pnl{font-size:1.2em;font-weight:700}
+
+/* Twitter */
+.tw-box{background:#1c2128;border:1px solid var(--border);border-radius:12px;padding:20px;
+         font-family:monospace;font-size:.9em;line-height:1.8;white-space:pre-wrap;
+         color:var(--text);position:relative}
+.tw-copy-btn{position:absolute;top:14px;right:14px;padding:6px 16px;
+              background:var(--accent)22;color:var(--accent);border:1px solid var(--accent)44;
+              border-radius:8px;cursor:pointer;font-size:.8em}
+.tw-footer{margin-top:12px;padding-top:12px;border-top:1px solid var(--border);color:var(--muted);font-size:.8em}
+
+/* Edit */
+.edit-zone{background:#1c2128;border:1px solid var(--yellow)44;border-radius:12px;
+            padding:20px;margin-bottom:20px}
+.edit-zone h4{color:var(--yellow);margin-bottom:14px;font-size:.95em}
+.edit-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.edit-field label{display:block;color:var(--muted);font-size:.8em;margin-bottom:4px}
+.edit-field input,.edit-field select,.edit-field textarea{
+    width:100%;background:#0d1117;border:1px solid var(--border);border-radius:8px;
+    padding:8px 12px;color:var(--text);font-size:.9em;outline:none}
+.edit-field input:focus,.edit-field select:focus,.edit-field textarea:focus{border-color:var(--accent)}
+.edit-field textarea{resize:vertical;min-height:70px}
+.save-btn{padding:10px 28px;background:var(--accent);color:#fff;border:none;
+           border-radius:8px;cursor:pointer;font-size:.9em;font-weight:600;
+           float:right;margin-top:8px}
+.save-btn:hover{opacity:.85}
+
+.empty-msg{color:var(--muted);text-align:center;padding:30px;font-size:.9em}
+
+@media(max-width:768px){.levels-wrap,.edit-row,.edit-row3{grid-template-columns:1fr}}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-top">
+    <div>
+      <div class="hero-title">ETH Daily Report</div>
+      <div class="hero-sub">2026年04月17日 &nbsp;|&nbsp; 数据来源：CoinGecko</div>
+    </div>
+    <div class="hero-badge">-0.66% (24h)</div>
+  </div>
+  <div class="price-block">
+    <div><div class="price-label">当前价格</div><div class="price-main">$2,345.30</div></div>
+    <div><div class="price-label">≈ CNY</div><div class="price-main" style="font-size:1.8em">¥15,998.21</div></div>
+    <div><div class="price-label">昨日收盘</div><div class="price-yest">$2,345.30</div></div>
+  </div>
+</div>
+
+<!-- S1: 数据面板 -->
+<div class="card">
+  <div class="sec-title"><span class="sec-icon">&#128202;</span><span>1. 数据统计面板</span></div>
+  <div class="stat-grid">
+    <div class="stat-card "><div class="stat-lbl">当前价格</div><div class="stat-val">$2,345.30</div></div>
+    <div class="stat-card "><div class="stat-lbl">昨日收盘</div><div class="stat-val">$2,345.30</div></div>
+    <div class="stat-card "><div class="stat-lbl">24h涨跌</div><div class="stat-val">-0.66%</div><div class=stat-sub>CoinGecko</div></div>
+    <div class="stat-card "><div class="stat-lbl">资金费率</div><div class="stat-val">0.0017%</div><div class=stat-sub>Binance 8h</div></div>
+    <div class="stat-card CoinGlass"><div class="stat-lbl">未平仓合约</div><div class="stat-val">N/A</div><div class=stat-sub>OI变化 +0.00%</div></div>
+    <div class="stat-card CoinGlass"><div class="stat-lbl">24h爆仓</div><div class="stat-val">N/A</div><div class=stat-sub>多50%/空50%</div></div>
+    <div class="stat-card "><div class="stat-lbl">市值</div><div class="stat-val">$282.98B</div><div class=stat-sub>USD</div></div>
+    <div class="stat-card "><div class="stat-lbl">24h成交量</div><div class="stat-val">$20.31B</div><div class=stat-sub>USD</div></div>
+  </div>
+</div>
+
+<!-- 支撑阻力 -->
+<div class="card">
+  <div class="sec-title"><span class="sec-icon">&#128205;</span><span>关键支撑阻力位</span></div>
+  <div class="levels-wrap">
+    <div class="level-col">
+      <h4>阻力位 Resistance</h4>
+      <div class="level-row level-r"><span>R3</span><span>$2,462.57</span></div>
+      <div class="level-row level-r"><span>R2</span><span>$2,415.66</span></div>
+      <div class="level-row level-r"><span>R1</span><span>$2,380.48</span></div>
+      <div class="level-row level-p"><span>Pivot</span><span>$2,345.30</span></div>
+    </div>
+    <div class="level-col">
+      <h4>支撑位 Support</h4>
+      <div class="level-row level-s"><span>S1</span><span>$2,310.12</span></div>
+      <div class="level-row level-s"><span>S2</span><span>$2,274.94</span></div>
+      <div class="level-row level-s"><span>S3</span><span>$2,228.03</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- 爆仓 -->
+<div class="card">
+  <div class="sec-title"><span class="sec-icon">&#128165;</span><span>24h 爆仓分布</span></div>
+  <div class="liq-bar"><div class="liq-fill">多头 50%</div></div>
+  <div style="display:flex;justify-content:space-between;color:var(--muted);font-size:.85em">
+    <span>&#129001; 空头 50%</span>
+    <span>全网爆仓 N/A</span>
+  </div>
+</div>
+
+<!-- S2: 14天追踪 -->
+<div class="card">
+  <div class="sec-title"><span class="sec-icon">&#128197;</span><span>2. 14天策略追踪</span></div>
+  <div style="overflow-x:auto">
+  <table>
+    <thead><tr><th>日期</th><th>涨跌</th><th>方向</th><th>入场</th><th>复盘小结</th><th>错误</th></tr></thead>
+    <tbody><tr class="empty-row"><td>04月04日</td><td colspan="5" class="empty-cell">— 无记录 —</td></tr><tr class="empty-row"><td>04月05日</td><td colspan="5" class="empty-cell">— 无记录 —</td></tr><tr class="empty-row"><td>04月06日</td><td colspan="5" class="empty-cell">— 无记录 —</td></tr><tr class="empty-row"><td>04月07日</td><td colspan="5" class="empty-cell">— 无记录 —</td></tr><tr class="empty-row"><td>04月08日</td><td colspan="5" class="empty-cell">— 无记录 —</td></tr><tr class="empty-row"><td>04月09日</td><td colspan="5" class="empty-cell">— 无记录 —</td></tr><tr class="empty-row"><td>04月10日</td><td colspan="5" class="empty-cell">— 无记录 —</td></tr><tr class="empty-row"><td>04月11日</td><td colspan="5" class="empty-cell">— 无记录 —</td></tr><tr class="empty-row"><td>04月12日</td><td colspan="5" class="empty-cell">— 无记录 —</td></tr><tr class="empty-row"><td>04月13日</td><td colspan="5" class="empty-cell">— 无记录 —</td></tr><tr>
+<td>2026年04月14日</td>
+<td style="color:#3fb950">+8.78%</td>
+<td>—</td>
+<td></td>
+<td class="review-cell">暂无</td>
+<td></td>
+</tr><tr>
+<td>2026年04月15日</td>
+<td style="color:#f85149">-1.18%</td>
+<td>—</td>
+<td></td>
+<td class="review-cell">暂无</td>
+<td></td>
+</tr><tr>
+<td>2026年04月16日</td>
+<td style="color:#3fb950">+1.12%</td>
+<td>—</td>
+<td></td>
+<td class="review-cell">暂无</td>
+<td></td>
+</tr><tr>
+<td>2026年04月17日</td>
+<td style="color:#f85149">-0.66%</td>
+<td>—</td>
+<td></td>
+<td class="review-cell">暂无</td>
+<td></td>
+</tr></tbody>
+  </table>
+  </div>
+</div>
+
+<!-- S3: 错误 -->
+<div class="card">
+  <div class="sec-title"><span class="sec-icon">&#9888;</span><span>3. 错误统计（近10条）</span></div>
+  <div class="empty-msg">暂无错误记录，保持良好习惯！</div>
+</div>
+
+<!-- S4: 方向 -->
+<div class="card">
+  <div class="sec-title"><span class="sec-icon">&#127919;</span><span>4. 做单方向与入场点位（最近5笔）</span></div>
+  <div class="trade-list"><div class="empty-msg">暂无交易记录</div></div>
+</div>
+
+<!-- S5: 胜率+月回顾 -->
+<div class="card">
+  <div class="sec-title"><span class="sec-icon">&#128200;</span><span>5. 胜率计算 & 月度回顾</span></div>
+  <div style="margin-bottom:24px">
+    <div style="color:var(--muted);font-size:.9em;margin-bottom:14px">总体胜率</div>
+    <div class="winrate-ring">
+      <div class="ring">
+        <svg viewBox="0 0 120 120">
+          <circle cx="60" cy="60" r="50" fill="none" stroke="#21262d" stroke-width="12"/>
+          <circle cx="60" cy="60" r="50" fill="none" stroke="#f85149"
+            stroke-width="12"
+            stroke-dasharray="0.0 314.0"
+            stroke-linecap="round"/>
+        </svg>
+        <div class="ring-center">
+          <div class="ring-pct">0.0%</div>
+          <div class="ring-label">胜率</div>
+        </div>
+      </div>
+      <div class="winrate-cards">
+        <div class="stat-card "><div class="stat-lbl">总交易次数</div><div class="stat-val">0</div></div>
+        <div class="stat-card green"><div class="stat-lbl">盈利次数</div><div class="stat-val">0</div></div>
+        <div class="stat-card red"><div class="stat-lbl">亏损次数</div><div class="stat-val">0</div></div>
+        <div class="stat-card green"><div class="stat-lbl">平均盈利</div><div class="stat-val">+0.00%</div><div class=stat-sub>胜局均值</div></div>
+        <div class="stat-card red"><div class="stat-lbl">平均亏损</div><div class="stat-val">0.00%</div><div class=stat-sub>败局均值</div></div>
+      </div>
+    </div>
+  </div>
+  <div>
+    <div style="color:var(--muted);font-size:.9em;margin-bottom:14px">2026-04 月度回顾</div>
+    <div class="month-grid">
+      <div class="stat-card "><div class="stat-lbl">交易次数</div><div class="stat-val">0</div></div>
+      <div class="stat-card red"><div class="stat-lbl">月胜率</div><div class="stat-val">0.0%</div></div>
+      <div class="stat-card green"><div class="stat-lbl">月盈亏</div><div class="stat-val">+0.00%</div><div class=stat-sub>累计收益率</div></div>
+      <div class="stat-card green"><div class="stat-lbl">最大盈利</div><div class="stat-val">+0.00%</div></div>
+      <div class="stat-card red"><div class="stat-lbl">最大亏损</div><div class="stat-val">0.00%</div></div>
+      <div class="stat-card red"><div class="stat-lbl">本月错误</div><div class="stat-val">0次</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- S6: Twitter -->
+<div class="card">
+  <div class="sec-title"><span class="sec-icon">&#128039;</span><span>6. 英文推特素材</span></div>
+  <div class="tw-box" id="tw-box">ETH Daily Report 2026-04-17
+
+Price: $2,345.30 (-0.66% 24h)
+Yesterday: $2,345.30
+Funding Rate: 0.0017%
+R1: $2,380.48 | S1: $2,310.12
+
+Bias: TBD
+
+
+This Month: 0 trades | Win Rate: 0.0%
+Total PnL: +0.00% | Errors: 0
+
+#ETH #Ethereum #CryptoTrading<button class="tw-copy-btn" onclick="copyTw()">Copy</button></div>
+  <div class="tw-footer">复制后可直接发推 &nbsp;|&nbsp; 完整数据请参考上方各板块</div>
+</div>
+
+<!-- S7: 手动填写 -->
+<div class="edit-zone">
+  <h4>&#128221; 每日手动填写（保存后刷新报告）</h4>
+  <div class="edit-row">
+    <div class="edit-field">
+      <label>今日方向</label>
+      <select id="f-direction">
+        <option value="">— 选择方向 —</option>
+        <option value="多头">&#128998; 多头 LONG</option>
+        <option value="空头">&#129001; 空头 SHORT</option>
+        <option value="震荡">&#129504; 震荡 RANGE</option>
+        <option value="观望">&#9208; 观望 WAIT</option>
+      </select>
+    </div>
+    <div class="edit-field">
+      <label>入场价格</label>
+      <input type="number" id="f-entry" step="0.01" placeholder="如 3456.78">
+    </div>
+  </div>
+  <div class="edit-row">
+    <div class="edit-field">
+      <label>止损价格</label>
+      <input type="number" id="f-stop" step="0.01" placeholder="如 3400.00">
+    </div>
+    <div class="edit-field">
+      <label>止盈价格</label>
+      <input type="number" id="f-target" step="0.01" placeholder="如 3600.00">
+    </div>
+  </div>
+  <div class="edit-field" style="margin-bottom:12px">
+    <label>今日复盘小结</label>
+    <textarea id="f-review" placeholder="记录分析思路、决策依据、盈亏情况..."></textarea>
+  </div>
+  <div class="edit-row">
+    <div class="edit-field">
+      <label>错误类型</label>
+      <select id="f-err-type">
+        <option value="">— 无错误 —</option>
+        <option value="重仓">&#9888; 重仓</option>
+        <option value="逆势">&#9888; 逆势</option>
+        <option value="不止损">&#9888; 不止损</option>
+        <option value="追单">&#9888; 追单</option>
+        <option value="扛单">&#9888; 扛单</option>
+        <option value="其他">&#9888; 其他</option>
+      </select>
+    </div>
+    <div class="edit-field">
+      <label>错误描述（简短）</label>
+      <input type="text" id="f-err-desc" placeholder="如：在阻力位上方追多被止损">
+    </div>
+  </div>
+  <button class="save-btn" onclick="saveEntry()">&#128190; 保存</button>
+  <div style="clear:both"></div>
+</div>
+
+</div>
+<script>
+const DATE_FILE = "2026-04-17";
+function saveEntry() {
+  const entry = {
+    date: DATE_FILE,
+    direction: document.getElementById('f-direction').value,
+    entry_price: parseFloat(document.getElementById('f-entry').value) || 0,
+    stop_loss: parseFloat(document.getElementById('f-stop').value) || 0,
+    take_profit: parseFloat(document.getElementById('f-target').value) || 0,
+    review: document.getElementById('f-review').value,
+    error_type: document.getElementById('f-err-type').value,
+    error_desc: document.getElementById('f-err-desc').value,
+  };
+  const blob = new Blob([JSON.stringify(entry, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'ETH_entry_' + DATE_FILE + '.json';
+  a.click();
+  alert('已生成填写文件，请复制内容追加到 strategy_data.json');
+}
+function copyTw() {
+  const text = document.getElementById('tw-box').innerText.replace('Copy','').trim();
+  navigator.clipboard.writeText(text).then(()=>alert('已复制推文！'));
+}
+</script>
+</body>
+</html>
